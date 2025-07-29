@@ -15,6 +15,8 @@ import VerifyEmail from "./pages/VerifyEmail";
 import { Toaster } from "react-hot-toast";
 import { useAuth } from "./stores/AuthContext";
 import Loading from "./components/Loading";
+import NotFound404 from "./pages/404";
+import ServerError5xx from "./pages/5xx";
 
 export default function App() {
   const { loading } = useAuth();
@@ -38,6 +40,9 @@ export default function App() {
         <Route path="/edit-address" element={<EditAddress />} />
 
         <Route path="/verify-email" element={<VerifyEmail />} />
+
+        <Route path="5xx" element={<ServerError5xx />} />
+        <Route path="*" element={<NotFound404 />} />
       </Routes>
     </>
   );
