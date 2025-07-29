@@ -1,0 +1,79 @@
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+  -webkit-animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    -webkit-transform: translateY(-10px);
+    -moz-transform: translateY(-10px);
+    -ms-transform: translateY(-10px);
+    -o-transform: translateY(-10px);
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      -webkit-transform: translateY(0);
+      -moz-transform: translateY(0);
+      -ms-transform: translateY(0);
+      -o-transform: translateY(0);
+    }
+  }
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  display: flex;
+}
+
+.loader .dot {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid #e8e8e8;
+  background: #16b0c1;
+  animation: jump 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes jump {
+  100% {
+    background: #661e92;
+    transform: translateZ(-3rem) scale(1.9);
+  }
+}
+
+.loader .dot:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.loader .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader .dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.loader .dot:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.loader .dot:nth-child(5) {
+  animation-delay: 0.5s;
+}
