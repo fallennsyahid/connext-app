@@ -31,7 +31,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -59,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password: string
   ) => {
     try {
-      setLoading(true);
+      setAuthLoading(true);
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -83,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     try {
-      setLoading(true);
+      setAuthLoading(true);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -105,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       toast.error("Login failed");
       console.error(error.message);
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   };
 
@@ -123,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (result.isConfirmed) {
       try {
-        setLoading(true);
+        setAuthLoading(true);
         await signOut(auth);
         setCurrentUser(null);
         toast.success("Logged successfully, see you again 👋");
@@ -131,7 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       } catch {
         toast.error("Log out failed");
       } finally {
-        setLoading(false);
+        setAuthLoading(false);
       }
     }
   };
