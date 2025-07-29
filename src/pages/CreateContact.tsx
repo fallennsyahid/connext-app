@@ -7,7 +7,7 @@ import Button from "../components/Button";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 
 const CreateContact = () => {
   const [firstName, setFirstName] = useState("");
@@ -34,6 +34,7 @@ const CreateContact = () => {
         email,
         phoneNumber,
         createdAtt: Timestamp.now(),
+        userId: auth.currentUser?.uid,
       });
       toast.success("Contact added successfully!");
       navigate("/dashboard");
@@ -164,8 +165,8 @@ const CreateContact = () => {
             </form>
           </div>
         </div>
-        <Footer />
       </main>
+      <Footer />
     </>
   );
 };

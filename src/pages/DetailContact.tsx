@@ -1,9 +1,54 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import AddAddressCard from "../components/AddAddressCard";
 import AddressListCard from "../components/AddressListCard";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+
+interface Contact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: number;
+}
 
 const DetailContact = () => {
+  const { id } = useParams<{ id: string }>();
+  const [contact, setContact] = useState<Contact | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContact = async () => {
+      if (!id) return;
+      try {
+        const docRef = doc(db, "contacts", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setContact({ id: docSnap.id, ...docSnap.data() } as Contact);
+        } else {
+          setContact(null);
+        }
+      } catch (err) {
+        console.error("Error fetching data" + err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContact();
+  }, [id]);
+
+  if (loading) {
+    return <p className="text-white text-center">Loading contact..</p>;
+  }
+
+  if (!contact) {
+    return <p className="text-gray-400 text-center">Contact not found.</p>;
+  }
+
   return (
     <>
       <Navbar />
@@ -27,7 +72,9 @@ const DetailContact = () => {
               <div className="w-20 h-20 bg-gradient rounded-full mx-auto flex justify-center items-center mb-4 shadow-lg">
                 <i className="fas fa-user text-3xl text-white"></i>
               </div>
-              <h1 className="text-white text-2xl font-bold mb-2">Full Name</h1>
+              <h1 className="text-white text-2xl font-bold mb-2">
+                {contact.firstName} {contact.lastName}
+              </h1>
               <div className="w-24 h-1 bg-gradient mx-auto rounded-full"></div>
             </div>
 
@@ -40,7 +87,7 @@ const DetailContact = () => {
                       First Name
                     </h1>
                   </div>
-                  <p className="text-lg text-white ml-6">Jhon</p>
+                  <p className="text-lg text-white ml-6">{contact.firstName}</p>
                 </div>
                 <div className="bg-gray-700/50 p-5 rounded-lg shadow-md border border-gray-600 transition-all duration-200 hover:bg-gray-700/70">
                   <div className="flex items-center mb-2">
@@ -49,7 +96,7 @@ const DetailContact = () => {
                       Last Name
                     </h1>
                   </div>
-                  <p className="text-lg text-white ml-6">Doe</p>
+                  <p className="text-lg text-white ml-6">{contact.lastName}</p>
                 </div>
               </div>
 
@@ -58,22 +105,22 @@ const DetailContact = () => {
                   <i className="fas fa-envelope text-blue-400 mr-2"></i>
                   <h1 className="text-sm font-medium text-gray-300">Email</h1>
                 </div>
-                <p className="text-lg text-white ml-6">umaru@example.com</p>
+                <p className="text-lg text-white ml-6">{contact.email}</p>
               </div>
 
               <div className="bg-gray-700/50 p-5 rounded-lg shadow-md border border-gray-600 transition-all duration-200 hover:bg-gray-700/70">
                 <div className="flex items-center mb-2">
-                  <i className="fas fa-envelope text-blue-400 mr-2"></i>
+                  <i className="fas fa-phone text-blue-400 mr-2"></i>
                   <h1 className="text-sm font-medium text-gray-300">
                     Phone Number
                   </h1>
                 </div>
                 <a
-                  href="https://wa.me/6289601260674"
+                  href={`https://wa.me/${contact.phoneNumber}`}
                   target="_blank"
                   className="text-lg text-white ml-6 hover:underline"
                 >
-                  +6289601260674
+                  {contact.phoneNumber}
                 </a>
               </div>
 

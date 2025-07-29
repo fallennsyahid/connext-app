@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="mt-10 text-center text-gray-400 text-sm animate-fade-in">
+    <footer className="relative bottom-0 left-0 w-full mt-2 mb-6 text-center text-gray-400 text-sm animate-fade-in">
       &copy; {new Date().getFullYear()} Contact Management App. Made with ❤️ by{" "}
       <a
         href="https://portfolio-umarusyahid.vercel.app/"
