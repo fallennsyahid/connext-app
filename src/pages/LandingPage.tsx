@@ -36,16 +36,15 @@ const LandingPage = () => {
             Contact Management App
           </h2>
           <p className="text-lg max-w-2xl mb-6 text-gray-400">
-            Kelola semua kontak Anda secara mudah dan efisien dalam satu
-            aplikasi. Tambahkan, edit, dan hapus kontak kapan saja, di mana
-            saja.
+            Manage all your contacts easily and efficiently in one application.
+            Add, edit, and delete contacts anytime, anywhere.
           </p>
           <div className="animate-bounce mt-2">
             <Link
               to="/dashboard"
               className="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition"
             >
-              Mulai Sekarang
+              Get Started
             </Link>
           </div>
         </div>
@@ -58,30 +57,28 @@ const LandingPage = () => {
           <div className="text-center border-2 border-gray-500 shadow-md shadow-black p-6 rounded-lg transition duration-200 hover:-translate-y-1">
             <div className="text-4xl mb-3">📱</div>
             <h3 className="text-xl text-sky-500 font-semibold mb-2">
-              Desain Responsif
+              Responsive Design
             </h3>
             <p className="text-gray-400">
-              Akses aplikasi dari perangkat apapun, baik mobile maupun desktop.
+              Access the app from any device, whether mobile or desktop.
             </p>
           </div>
           <div className="text-center border-2 border-gray-500 shadow-md shadow-black p-6 rounded-lg transition duration-200 hover:-translate-y-1">
             <div className="text-4xl mb-3">🔒</div>
             <h3 className="text-xl text-sky-500 font-semibold mb-2">
-              Data Aman
+              Secure Data
             </h3>
             <p className="text-gray-400">
-              Kontak Anda disimpan dengan aman dan hanya dapat diakses oleh
-              Anda.
+              Your contacts are stored securely and can only be accessed by you.
             </p>
           </div>
           <div className="text-center border-2 border-gray-500 shadow-md shadow-black p-6 rounded-lg transition duration-200 hover:-translate-y-1">
             <div className="text-4xl mb-3">⚡</div>
             <h3 className="text-xl text-sky-500 font-semibold mb-2">
-              Cepat & Mudah
+              Fast & Easy
             </h3>
             <p className="text-gray-400">
-              Pengelolaan kontak yang intuitif dan efisien hanya dalam beberapa
-              klik.
+              Intuitive and efficient contact management in just a few clicks.
             </p>
           </div>
         </div>
@@ -91,16 +88,16 @@ const LandingPage = () => {
       {/* CTA Section Start */}
       <section className="px-6 py-20 text-center">
         <h2 className="text-3xl font-bold text-sky-700 mb-4">
-          Kelola Kontak Tanpa Ribet
+          Manage Contacts Without Hassle
         </h2>
         <p className="text-gray-400 mb-6">
-          Gunakan aplikasi kami dan mulai atur daftar kontak Anda sekarang juga!
+          Use our app and start organizing your contact list right now!
         </p>
         <Link
           to="/dashboard"
           className="bg-sky-600 hover:bg-sky-700 text-white py-3 px-6 rounded-lg font-medium"
         >
-          Coba Sekarang
+          Try Now
         </Link>
       </section>
       {/* CTA Section End */}
