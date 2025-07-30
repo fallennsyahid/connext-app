@@ -65,6 +65,7 @@ const SearchForm = ({ onSearch }: SearchFormInput) => {
         <button
           type="button"
           id="toggleSearchForm"
+          aria-label={visible ? "Hide search form" : "Show search form"}
           onClick={() => setVisible(!visible)}
           className="text-gray-300 cursor-pointer hover:text-white hover:bg-gray-700 p-2 rounded-full focus:outline-none transition-all duration-200"
         >
@@ -73,6 +74,7 @@ const SearchForm = ({ onSearch }: SearchFormInput) => {
             className={`fas ${
               visible ? "fa-chevron-up" : "fa-chevron-down"
             } text-lg font-semibold`}
+            aria-hidden="true"
           ></i>
         </button>
       </div>

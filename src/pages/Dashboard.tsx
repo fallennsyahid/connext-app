@@ -27,7 +27,10 @@ const Dashboard = () => {
 
   const fetchContacts = useCallback(
     async (filters?: { name: string; email: string; phoneNumber: string }) => {
-      if (!currentUser) return;
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
 
       const q = query(
@@ -113,7 +116,20 @@ const Dashboard = () => {
 
         <SearchForm onSearch={handleSearch} />
 
-        {loading ? (
+        {!currentUser ? (
+          <div className="p-6 bg-gray-800/80 flex flex-col items-center justify-center rounded-xl shadow-lg animate-fade-in">
+            <i className="fas fa-lock text-4xl text-red-400 animate-bounce"></i>
+            <p className="text-gray-400 text-center italic mt-2 text-xl">
+              You must login to view your contacts
+            </p>
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-red-600 text-white font-semibold rounded-full px-4 py-2 mt-2 cursor-pointer hover:bg-red-700 transition-all duration-200"
+            >
+              Go to Login
+            </button>
+          </div>
+        ) : loading ? (
           <p className="text-gray-300 col-span-full text-center">
             Loading contacts...
           </p>

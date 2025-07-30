@@ -101,7 +101,7 @@ const ContactListCard = ({
             </Link>
             <Button
               type="submit"
-              color="bg-red-500"
+              color="bg-[#B5030C]"
               icon={deleting ? "fa-spinner fa-spin" : "fa-trash-alt"}
               text={deleting ? "Deleting" : "Delete"}
               ring="ring-red-500"
