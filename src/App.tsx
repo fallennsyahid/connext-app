@@ -64,8 +64,9 @@ export default function App() {
 
         <Route path="/detail-contact/:id" element={<DetailContact />} />
         <Route path="/edit-contact/:id" element={<EditContact />} />
-        <Route path="/add-address" element={<AddAddress />} />
-        <Route path="/edit-address" element={<EditAddress />} />
+        <Route path="/add-address/:id" element={<AddAddress />} />
+
+        <Route path="/edit-address/:id" element={<EditAddress />} />
 
         <Route path="/verify-email" element={<VerifyEmail />} />
 

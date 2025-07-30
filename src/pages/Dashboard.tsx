@@ -25,29 +25,6 @@ const Dashboard = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       const q = query(
-  //         collection(db, "contacts"),
-  //         where("userId", "==", user.uid)
-  //       );
-
-  //       const querySnapshot = await getDocs(q);
-  //       const contactData = querySnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       })) as Contact[];
-  //       setContacts(contactData);
-  //     } else {
-  //       setContacts([]);
-  //     }
-  //     setLoading(false);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
-
   const fetchContacts = useCallback(
     async (filters?: { name: string; email: string; phoneNumber: string }) => {
       if (!currentUser) return;

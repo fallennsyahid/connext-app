@@ -1,11 +1,75 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Label from "../components/Label";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import React, { useEffect, useState } from "react";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+import toast from "react-hot-toast";
 
 const EditAddress = () => {
+  const { id } = useParams<{ id: string }>();
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [country, setCountry] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [titleAddress, setTitleAddress] = useState("");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (!id) return;
+      try {
+        const docRef = doc(db, "addresses", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setStreet(data.street);
+          setCity(data.city);
+          setProvince(data.province);
+          setCountry(data.country);
+          setPostalCode(data.postalCode);
+          setTitleAddress(data.titleAddress);
+        } else {
+          toast.error("Address not found!");
+          navigate("/dashboard");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load address");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAddress();
+  }, [id, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id) return;
+    try {
+      await updateDoc(doc(db, "addresses", id), {
+        street,
+        city,
+        province,
+        country,
+        postalCode,
+        titleAddress,
+      });
+      toast.success("Address updated successfully!");
+      navigate(-1);
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update address");
+    }
+  };
+
+  if (loading) return <p className="text-white">Loading..</p>;
+
   return (
     <>
       <Navbar />
@@ -29,11 +93,30 @@ const EditAddress = () => {
               <div className="w-20 h-20 bg-gradient rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg">
                 <i className="fa-solid fa-user text-3xl text-white"></i>
               </div>
-              <h1 className="text-2xl font-bold text-white mb-2">John Doe</h1>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                {titleAddress}
+              </h1>
               <div className="w-24 h-1 bg-gradient mx-auto rounded-full"></div>
             </div>
 
-            <form>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-5">
+                <Label htmlFor="titleAddress" text="Title Address" />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i className="fas fa-location-dot text-gray-500"></i>
+                  </div>
+                  <Input
+                    type="text"
+                    name="titleAddress"
+                    id="titleAddress"
+                    placeholder="Enter the title address"
+                    value={titleAddress}
+                    onChange={(e) => setTitleAddress(e.target.value)}
+                  />
+                </div>
+              </div>
+
               <div className="mb-5">
                 <Label htmlFor="street" text="Street" />
                 <div className="relative">
@@ -45,8 +128,8 @@ const EditAddress = () => {
                     name="street"
                     id="street"
                     placeholder="Enter the street address"
-                    value="123 Third St"
-                    onChange={() => {}}
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
                   />
                 </div>
               </div>
@@ -63,8 +146,8 @@ const EditAddress = () => {
                       name="city"
                       id="city"
                       placeholder="Enter the city address"
-                      value="NYC"
-                      onChange={() => {}}
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
                     />
                   </div>
                 </div>
@@ -79,8 +162,8 @@ const EditAddress = () => {
                       name="province"
                       id="province"
                       placeholder="Enter the province/state address"
-                      value="New York"
-                      onChange={() => {}}
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
                     />
                   </div>
                 </div>
@@ -98,24 +181,24 @@ const EditAddress = () => {
                       name="country"
                       id="country"
                       placeholder="Enter the country address"
-                      value="USA"
-                      onChange={() => {}}
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="postal_code" text="Postal Code" />
+                  <Label htmlFor="postalCode" text="Postal Code" />
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <i className="fas fa-envelopes-bulk text-gray-500"></i>
                     </div>
                     <Input
                       type="text"
-                      name="postal_code"
-                      id="postal_code"
+                      name="postalCode"
+                      id="postalCode"
                       placeholder="Enter the postal code"
-                      value="12345"
-                      onChange={() => {}}
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
                     />
                   </div>
                 </div>
@@ -123,7 +206,8 @@ const EditAddress = () => {
 
               <div className="flex justify-end space-x-4">
                 <Link
-                  to="/detail-contact"
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  to={-1 as any}
                   className="px-5 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 flex items-center shadow-md"
                 >
                   <i className="fas fa-times mr-2"></i> Cancel

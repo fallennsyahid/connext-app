@@ -145,7 +145,7 @@ const DetailContact = () => {
                   </h1>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AddAddressCard />
+                  <AddAddressCard contactId={contact.id} />
                   <AddressListCard />
                 </div>
               </div>

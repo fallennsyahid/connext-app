@@ -1,18 +1,63 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Label from "../components/Label";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "../config/firebase";
 
 const AddAddress = () => {
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [country, setCountry] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [titleAddress, setTitleAddress] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { id: contactId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!street || !city || !province || !country || !postalCode) {
+      toast.error("All fields must be filled");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await addDoc(collection(db, "addresses"), {
+        titleAddress,
+        street,
+        city,
+        province,
+        country,
+        postalCode,
+        contactId,
+        createdAt: Timestamp.now(),
+      });
+      toast.success("Address added successfully!");
+      navigate(`/detail-contact/${contactId}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add address");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="flex items-center mb-6">
           <Link
-            to="/detail-contact"
+            to={`/detail-contact/${contactId}`}
             className="text-blue-400 hover:text-blue-300 mr-4 flex items-center transition-colors duration-200"
           >
             <i className="fas fa-arrow-left mr-2"></i>
@@ -40,7 +85,26 @@ const AddAddress = () => {
               </div>
             </div>
 
-            <form>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-5">
+                <Label htmlFor="title" text="Title Address" />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i className="fa-solid fa-location-dot text-gray-500"></i>
+                  </div>
+
+                  <Input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Home Address"
+                    value={titleAddress}
+                    onChange={(e) => setTitleAddress(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
               <div className="mb-5">
                 <Label htmlFor="street" text="Street" />
                 <div className="relative">
@@ -53,8 +117,8 @@ const AddAddress = () => {
                     id="street"
                     name="street"
                     placeholder="Enter the street address"
-                    value=""
-                    onChange={() => {}}
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
                     required
                   />
                 </div>
@@ -73,8 +137,8 @@ const AddAddress = () => {
                       id="city"
                       name="city"
                       placeholder="Enter the city address"
-                      value=""
-                      onChange={() => {}}
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
                       required
                     />
                   </div>
@@ -91,8 +155,8 @@ const AddAddress = () => {
                       id="province"
                       name="province"
                       placeholder="Enter the province address"
-                      value=""
-                      onChange={() => {}}
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
                       required
                     />
                   </div>
@@ -112,8 +176,8 @@ const AddAddress = () => {
                       id="country"
                       name="country"
                       placeholder="Enter the country address"
-                      value=""
-                      onChange={() => {}}
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
                       required
                     />
                   </div>
@@ -130,8 +194,8 @@ const AddAddress = () => {
                       id="postal_code"
                       name="postal_code"
                       placeholder="Enter the postal code"
-                      value=""
-                      onChange={() => {}}
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
                       required
                     />
                   </div>
@@ -140,7 +204,7 @@ const AddAddress = () => {
 
               <div className="flex justify-end space-x-4">
                 <Link
-                  to="/detail-contact"
+                  to={`/detail-contact/${contactId}`}
                   className="px-5 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 flex items-center shadow-md"
                 >
                   <i className="fas fa-times mr-2"></i> Cancel
@@ -148,7 +212,7 @@ const AddAddress = () => {
                 <Button
                   type="submit"
                   icon="fa-plus-circle"
-                  text="Add Address"
+                  text={loading ? "Adding.." : "Add Address"}
                   color="bg-gradient"
                 />
               </div>

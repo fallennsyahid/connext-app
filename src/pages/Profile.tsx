@@ -8,6 +8,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { auth } from "../config/firebase";
 import { updatePassword, updateProfile } from "firebase/auth";
 import toast from "react-hot-toast";
+import PasswordInput from "../components/PasswordInput";
 
 const Profile = () => {
   const [fullName, setFullName] = useState("");
@@ -143,14 +144,15 @@ const Profile = () => {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <i className="fas fa-lock text-gray-500"></i>
                     </div>
-                    <Input
-                      type="text"
+                    <PasswordInput
                       name="new_password"
                       id="new_password"
                       placeholder="Enter your new password"
+                      icon="fa-lock"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
+                      withToggle
                     />
                   </div>
                 </div>
@@ -163,14 +165,15 @@ const Profile = () => {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <i className="fas fa-check-double text-gray-500"></i>
                     </div>
-                    <Input
-                      type="text"
+                    <PasswordInput
                       name="confirm_password"
                       id="confirm_password"
                       placeholder="Confirm your new password"
+                      icon="fa-check-double"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
+                      withToggle
                     />
                   </div>
                   {confirmPassword && newPassword !== confirmPassword && (
@@ -194,8 +197,8 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        <Footer />
       </main>
+      <Footer />
     </>
   );
 };
