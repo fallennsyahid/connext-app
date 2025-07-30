@@ -63,7 +63,7 @@ const CreateContact = () => {
           </h1>
         </div>
 
-        <div className="bg-gray-800/80 rounded-xl shadow-lg border border-gray-700 overflow-hidden max-w-2xl mx-auto">
+        <div className="bg-gray-800/80 rounded-xl shadow-lg border border-gray-700 overflow-hidden max-w-2xl mx-auto animate-fade-in">
           <div className="p-8">
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
@@ -77,7 +77,7 @@ const CreateContact = () => {
                       type="text"
                       name="first_name"
                       id="first_name"
-                      placeholder="Enter the first name"
+                      placeholder="Jhon"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       required
@@ -94,7 +94,7 @@ const CreateContact = () => {
                       type="text"
                       name="last_name"
                       id="last_name"
-                      placeholder="Enter the last name"
+                      placeholder="Doe"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       required
@@ -113,7 +113,7 @@ const CreateContact = () => {
                     type="email"
                     name="email"
                     id="email"
-                    placeholder="Enter the email"
+                    placeholder="jhondoe@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -131,7 +131,7 @@ const CreateContact = () => {
                     type="tel"
                     name="phone_number"
                     id="phone_number"
-                    placeholder="Enter the phone number"
+                    placeholder="ex. +6281234"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     required
@@ -153,6 +153,12 @@ const CreateContact = () => {
                   color="bg-red-600"
                   ring="ring-red-600"
                   disable={loading}
+                  onClick={() => {
+                    setFirstName("");
+                    setLastName("");
+                    setEmail("");
+                    setPhoneNumber("");
+                  }}
                 />
                 <Button
                   type="submit"

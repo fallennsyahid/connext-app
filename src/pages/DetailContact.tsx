@@ -5,6 +5,7 @@ import AddressListCard from "../components/AddressListCard";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import Loading from "../components/Loading";
 
 interface Contact {
   id: string;
@@ -41,12 +42,24 @@ const DetailContact = () => {
     fetchContact();
   }, [id]);
 
-  if (loading) {
-    return <p className="text-white text-center">Loading contact..</p>;
-  }
+  if (loading) return <Loading />;
 
   if (!contact) {
-    return <p className="text-gray-400 text-center">Contact not found.</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px]">
+        <i className="fas fa-exclamation-circle text-4xl text-red-400 mb-4"></i>
+        <p className="text-gray-400 text-lg font-semibold text-center">
+          Contact not found.
+        </p>
+        <Link
+          to="/dashboard"
+          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 flex items-center"
+        >
+          <i className="fas fa-arrow-left mr-2"></i>
+          Back to Contacts
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -146,7 +159,7 @@ const DetailContact = () => {
                 <i className="fas fa-arrow-left mr-2"></i> Back
               </Link>
               <Link
-                to="/edit-contact"
+                to={`/edit-contact/${contact.id}`}
                 className="px-5 py-3 bg-gradient text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-lg transform hover:-translate-y-0.5 flex items-center"
               >
                 <i className="fas fa-user-edit mr-2"></i>Edit Contact

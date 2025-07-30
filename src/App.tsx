@@ -17,6 +17,8 @@ import { useAuth } from "./stores/AuthContext";
 import Loading from "./components/Loading";
 import NotFound404 from "./pages/404";
 import ServerError5xx from "./pages/5xx";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import GuestRoute from "./routes/GuestRoute";
 
 export default function App() {
   const { loading } = useAuth();
@@ -29,13 +31,39 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
+
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/create-contact" element={<CreateContact />} />
+
+        <Route
+          path="/create-contact"
+          element={
+            <ProtectedRoute>
+              <CreateContact />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/detail-contact/:id" element={<DetailContact />} />
-        <Route path="/edit-contact" element={<EditContact />} />
+        <Route path="/edit-contact/:id" element={<EditContact />} />
         <Route path="/add-address" element={<AddAddress />} />
         <Route path="/edit-address" element={<EditAddress />} />
 

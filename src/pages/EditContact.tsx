@@ -1,11 +1,62 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Label from "../components/Label";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import React, { useEffect, useState } from "react";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+import toast from "react-hot-toast";
+import Loading from "../components/Loading";
 
 const EditContact = () => {
+  const { id } = useParams<{ id: string }>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [contact, setContact] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchContact = async () => {
+      if (!id) return;
+      try {
+        const docRef = doc(db, "contacts", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setContact({ id: docSnap.id, ...docSnap.data() });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContact();
+  }, [id]);
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!id || !contact) return;
+    try {
+      await updateDoc(doc(db, "contacts", id), {
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        email: contact.email,
+        phoneNumber: contact.phoneNumber,
+      });
+      toast.success("Contact updated!");
+      navigate(`/detail-contact/${id}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Update failed!");
+    }
+  };
+
+  if (loading) return <Loading />;
+  if (!contact) return <p>Contact not found..</p>;
+
   return (
     <>
       <Navbar />
@@ -26,7 +77,7 @@ const EditContact = () => {
 
         <div className="bg-gray-800 rounded-xl shadow-xl border border-gray-700 overflow-hidden max-w-2xl mx-auto animate-fade-in">
           <div className="p-8">
-            <form>
+            <form onSubmit={handleUpdate}>
               <div className="grid grid-cols-1 md:grid-cols-2 mb-5 gap-5">
                 <div>
                   <Label htmlFor="first_name" text="First Name" />
@@ -39,8 +90,10 @@ const EditContact = () => {
                       name="first_name"
                       id="first_name"
                       placeholder="Enter the first name"
-                      value=""
-                      onChange={() => {}}
+                      value={contact.firstName}
+                      onChange={(e) =>
+                        setContact({ ...contact, firstName: e.target.value })
+                      }
                     />
                   </div>
                 </div>
@@ -55,8 +108,10 @@ const EditContact = () => {
                       name="last_name"
                       id="last_name"
                       placeholder="Enter the last name"
-                      value=""
-                      onChange={() => {}}
+                      value={contact.lastName}
+                      onChange={(e) =>
+                        setContact({ ...contact, lastName: e.target.value })
+                      }
                     />
                   </div>
                 </div>
@@ -73,8 +128,10 @@ const EditContact = () => {
                     name="email"
                     id="email"
                     placeholder="Enter the email"
-                    value=""
-                    onChange={() => {}}
+                    value={contact.email}
+                    onChange={(e) =>
+                      setContact({ ...contact, email: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -90,8 +147,10 @@ const EditContact = () => {
                     name="phone_number"
                     id="phone_number"
                     placeholder="Enter the phone number"
-                    value=""
-                    onChange={() => {}}
+                    value={String(contact.phoneNumber || "")}
+                    onChange={(e) =>
+                      setContact({ ...contact, phoneNumber: e.target.value })
+                    }
                   />
                 </div>
               </div>

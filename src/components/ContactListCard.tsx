@@ -10,7 +10,7 @@ interface Contact {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: number;
+  phoneNumber: string;
   userId: string;
 }
 const ContactListCard = ({

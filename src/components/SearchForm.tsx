@@ -1,9 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, type FormEvent } from "react";
 import Button from "./Button";
 import Input from "./Input";
 import Label from "./Label";
 
-const SearchForm = () => {
+interface SearchFormInput {
+  onSearch: (filters: {
+    name: string;
+    email: string;
+    phoneNumber: string;
+  }) => void;
+}
+
+const SearchForm = ({ onSearch }: SearchFormInput) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phoneNumber: "",
+  });
+
   const [visible, setVisible] = useState(false);
   const searchFormRef = useRef<HTMLDivElement>(null);
 
@@ -21,6 +35,24 @@ const SearchForm = () => {
       content.style.marginTop = "0";
     }
   }, [visible]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onSearch({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phoneNumber: formData.phoneNumber.trim(),
+    });
+  };
+
+  const handleReset = () => {
+    setFormData({ name: "", email: "", phoneNumber: "" });
+    onSearch({ name: "", email: "", phoneNumber: "" });
+  };
 
   return (
     <div className="bg-gray-800/80 rounded-xl shadow-lg border border-gray-700 p-6 mb-8 animate-fade-in">
@@ -57,44 +89,47 @@ const SearchForm = () => {
             "max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out",
         }}
       >
-        <form action="">
+        <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 px-2">
             <div>
-              <Label htmlFor="search_name" text="Name" />
+              <Label htmlFor="name" text="Name" />
               <Input
                 type="text"
-                name="search_name"
-                id="search_name"
+                name="name"
+                id="name"
                 icon="fa-user"
                 placeholder="Enter name to search"
-                value="Umaru"
-                onChange={() => {}}
+                value={formData.name}
+                onChange={handleChange}
+                required={false}
               />
             </div>
 
             <div>
-              <Label htmlFor="search_email" text="Email" />
+              <Label htmlFor="email" text="Email" />
               <Input
                 type="email"
-                name="search_email"
-                id="search_email"
+                name="email"
+                id="email"
                 icon="fa-envelope"
                 placeholder="Enter email to search"
-                value="syahid@example.com"
-                onChange={() => {}}
+                value={formData.email}
+                onChange={handleChange}
+                required={false}
               />
             </div>
 
             <div>
-              <Label htmlFor="search_phone" text="Phone" />
+              <Label htmlFor="phoneNumber" text="Phone" />
               <Input
                 type="tel"
-                name="search_phone"
-                id="search_phone"
+                name="phoneNumber"
+                id="phoneNumber"
                 icon="fa-phone"
                 placeholder="Enter phone number to search"
-                value="0896"
-                onChange={() => {}}
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                required={false}
               />
             </div>
           </div>
@@ -105,7 +140,8 @@ const SearchForm = () => {
               text="Reset"
               color="bg-red-600"
               icon="fa-rotate-left"
-              ring="ring-red-500"
+              ring="focus:ring-red-500"
+              onClick={handleReset}
             />
             <Button
               type="submit"

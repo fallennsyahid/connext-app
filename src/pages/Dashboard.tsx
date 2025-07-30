@@ -1,52 +1,128 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ContactListCard from "../components/ContactListCard";
 import CreateContactCard from "../components/CreateContactCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import SearchForm from "../components/SearchForm";
-import { auth, db } from "../config/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { db } from "../config/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "../stores/AuthContext";
+import Swal from "sweetalert2";
 
 interface Contact {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: number;
+  phoneNumber: string;
   userId: string;
 }
 
 const Dashboard = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //     if (user) {
+  //       const q = query(
+  //         collection(db, "contacts"),
+  //         where("userId", "==", user.uid)
+  //       );
+
+  //       const querySnapshot = await getDocs(q);
+  //       const contactData = querySnapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         ...doc.data(),
+  //       })) as Contact[];
+  //       setContacts(contactData);
+  //     } else {
+  //       setContacts([]);
+  //     }
+  //     setLoading(false);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
+  const fetchContacts = useCallback(
+    async (filters?: { name: string; email: string; phoneNumber: string }) => {
+      if (!currentUser) return;
+      setLoading(true);
+
+      const q = query(
+        collection(db, "contacts"),
+        where("userId", "==", currentUser.uid)
+      );
+
+      const querySnapshot = await getDocs(q);
+      let contactData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Contact[];
+
+      if (filters) {
+        const nameFilter = filters.name?.toLowerCase() || "";
+        const emailFilter = filters.email?.toLowerCase() || "";
+        const phoneFilter = filters.phoneNumber.toLowerCase() || "";
+
+        contactData = contactData.filter((c) => {
+          const matchName = nameFilter
+            ? (c.firstName + " " + c.lastName)
+                .toLowerCase()
+                .includes(nameFilter)
+            : true;
+
+          const matchEmail = emailFilter
+            ? c.email.toLowerCase().includes(emailFilter)
+            : true;
+
+          const matchPhone = phoneFilter
+            ? String(c.phoneNumber).includes(phoneFilter)
+            : true;
+
+          return matchName && matchEmail && matchPhone;
+        });
+      }
+
+      setContacts(contactData);
+      setLoading(false);
+    },
+    [currentUser]
+  );
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const q = query(
-          collection(db, "contacts"),
-          where("userId", "==", user.uid)
-        );
+    if (!currentUser) return;
+    fetchContacts();
+  }, [currentUser, fetchContacts]);
 
-        const querySnapshot = await getDocs(q);
-        const contactData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Contact[];
-        setContacts(contactData);
-      } else {
-        setContacts([]);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const handleSearch = (filters: {
+    name: string;
+    email: string;
+    phoneNumber: string;
+  }) => {
+    fetchContacts(filters);
+  };
 
   const handleRemoveContact = (id: string) => {
     setContacts((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const handleClickAdd = () => {
+    if (!currentUser) {
+      Swal.fire({
+        icon: "warning",
+        title: "Oops..",
+        text: "you are not logged in yet!",
+        confirmButtonColor: "#CC0000",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+    navigate("/create-contact");
   };
 
   return (
@@ -58,7 +134,7 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-white">My Contacts</h1>
         </div>
 
-        <SearchForm />
+        <SearchForm onSearch={handleSearch} />
 
         {loading ? (
           <p className="text-gray-300 col-span-full text-center">
@@ -71,12 +147,12 @@ const Dashboard = () => {
               <p className="text-gray-400 text-center italic mt-2 text-xl">
                 No Contacts Yet
               </p>
-              <Link
-                to="/create-contact"
+              <button
+                onClick={handleClickAdd}
                 className="bg-blue-800 text-lg text-white font-semibold shadow-md rounded-full px-4 py-2 mt-2 hover:bg-blue-900 hover:shadow-lg transition-all duration-200"
               >
                 Add New Contact
-              </Link>
+              </button>
               <p className="text-gray-500 text-sm mt-2 text-center">
                 Start by adding your first contact to manage them here.
               </p>
